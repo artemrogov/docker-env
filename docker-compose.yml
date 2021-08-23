@@ -61,7 +61,19 @@ services:
     networks:
       - gstd2_network
 
-
+ service_search:
+      image: 'bitnami/elasticsearch:latest'
+      container_name: service_search
+      volumes:
+        - elasticsearch:/usr/share/elasticsearch/data
+      environment:
+        - bootstrap.memory_lock=true
+        - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+        - "discovery.type=single-node"
+      ports:
+        - "9200:9200"
+      networks:
+        - gstd2_network
 
 networks:
   gstd2_network:
@@ -71,4 +83,5 @@ volumes:
    master_data:
    slave_data:
    www-html: 
-   cache_redis_data: 
+   cache_redis_data:
+   elasticsearch: 
