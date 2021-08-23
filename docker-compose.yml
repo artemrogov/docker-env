@@ -1,0 +1,74 @@
+version: "3.7"
+
+services:
+ api_backend:
+    build:
+      args:
+         user: ${USER}
+         uid: 1000
+      context: .
+      dockerfile: Dockerfile
+    container_name: api_backend
+    restart: unless-stopped
+    working_dir: /var/www/html/
+    tty: true
+    volumes:
+      - ./:/var/www/html/
+    networks:
+     - gstd2_network
+
+       
+ load_balanser:
+    image: nginx:1.19.8-alpine
+    container_name: load_balanser
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/:/etc/nginx/conf.d/
+    networks:
+      - gstd2_network
+
+ 
+ cache_service:
+  image: redis:latest 
+  container_name: cache_service
+  tty: true
+  restart: unless-stopped
+  command: redis-server --requirepass test123
+  ports:
+    - "6379:6379"
+  volumes:
+    - cache_redis_data:/var/lib/redis
+  networks:
+    - gstd2_network
+
+
+ master_db:
+    image: postgres:12.5-alpine
+    restart: unless-stopped
+    container_name: master_db
+    tty: true
+    environment:
+      POSTGRES_DB: artem_db
+      POSTGRES_USER: artem
+      POSTGRES_PASSWORD: artem1990
+    ports:
+      - 5432:5432
+    volumes:
+     - master_data:/var/lib/postgresql/data/
+    networks:
+      - gstd2_network
+
+
+
+networks:
+  gstd2_network:
+    driver: bridge
+
+volumes:
+   master_data:
+   slave_data:
+   www-html: 
+   cache_redis_data: 
