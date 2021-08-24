@@ -1,6 +1,21 @@
 version: "3.7"
 
 services:
+ 
+ frontend_service:
+    image: node:12-alpine
+    command: sh -c "yarn install && yarn run dev"
+    ports:
+       - 3000:3000
+    container_name: frontend_service
+    restart: unless-stopped
+    working_dir: /app
+    tty: true
+    volumes:
+      - ./frontend:/app
+    networks:
+     - gstd2_network
+         
  api_backend:
     build:
       args:
