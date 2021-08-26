@@ -25,10 +25,10 @@ services:
       dockerfile: Dockerfile
     container_name: api_backend
     restart: unless-stopped
-    working_dir: /var/www/html/
+    working_dir: /var/www/html
     tty: true
     volumes:
-      - ./:/var/www/html/
+      - ./:/var/www/html
     networks:
      - gstd2_network
 

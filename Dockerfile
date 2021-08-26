@@ -57,10 +57,10 @@ RUN echo "" >> ~/.bashrc && \
    
 USER $user
 
-WORKDIR /var/www/html/
+WORKDIR /var/www/html
 
 # Copy existing application directory contents
-COPY ./ /var/www/html/
+COPY ./ /var/www/html
 
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
