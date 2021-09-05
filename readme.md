@@ -24,5 +24,9 @@
 
 - Остановить сервисы командой: ``docker-compose down``
 
+- Выполнить ``chmod +x setting_vm.sh``
+
+- Для сервиса elasticsearch выполнить команду: ``./setting_vm.sh`` или `` bash setting_vm.sh``
+
 
 
