@@ -75,7 +75,7 @@ services:
   container_name: cache_service
   tty: true
   restart: unless-stopped
-  command: redis-server --requirepass test123
+  command: redis-server --requirepass $CACHE_SERVER_PASSWORD
   ports:
     - "6379:6379"
   volumes:
@@ -90,9 +90,9 @@ services:
     container_name: master_db
     tty: true
     environment:
-      POSTGRES_DB: artem_db
-      POSTGRES_USER: artem
-      POSTGRES_PASSWORD: artem1990
+      POSTGRES_DB: $DB_USERNAME
+      POSTGRES_USER: $DB_NAME
+      POSTGRES_PASSWORD: $DB_PASSWORD
     ports:
       - 5432:5432
     volumes:
