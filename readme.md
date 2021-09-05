@@ -14,7 +14,7 @@
 
 ## Настройка и запуск
 
-- Склонировать проект: ``git clone git@github.com:artemrogov/services.git``
+- Клонировать проект: ``git clone git@github.com:artemrogov/services.git``
 
 - В каталоге с проектом скопировать файл с ``cp .env_example .env``
 
