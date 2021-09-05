@@ -1,7 +1,18 @@
 version: "3.7"
 
 services:
- 
+
+ frontend_server:
+    image: nginx:1.19.8-alpine
+    container_name: frontend_server
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./frontend_server/:/etc/nginx/conf.d/
+    networks:
+      - gstd2_network
+
  frontend_service:
     image: node:12-alpine
     command: sh -c "yarn install && yarn run dev"
@@ -15,27 +26,40 @@ services:
       - ./frontend:/app
     networks:
      - gstd2_network
-         
+
+ server_backend:
+    image: nginx:1.19.8-alpine
+    container_name: server_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./server_backend/:/etc/nginx/conf.d/
+    networks:
+      - gstd2_network
+
  api_backend:
     build:
       args:
          user: ${USER}
          uid: 1000
-      context: .
+      context: ./api_backend
       dockerfile: Dockerfile
     container_name: api_backend
+    ports:
+      - 9000:9000
     restart: unless-stopped
-    working_dir: /var/www/html
+    working_dir: /var/www/html/
     tty: true
     volumes:
-      - ./:/var/www/html
+      - ./api_backend/src/:/var/www/html/
     networks:
      - gstd2_network
 
        
- load_balanser:
+ proxy_server:
     image: nginx:1.19.8-alpine
-    container_name: load_balanser
+    container_name: proxy_server
     restart: unless-stopped
     ports:
       - "80:80"
@@ -96,7 +120,6 @@ networks:
 
 volumes:
    master_data:
-   slave_data:
    www-html: 
    cache_redis_data:
    elasticsearch: 
