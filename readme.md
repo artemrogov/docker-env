@@ -20,13 +20,15 @@
 
 - Настроить файл с конфигурацией ``.env`` на свое усмотрение
 
+- В файле конфигурации ``.env`` установить PATH_ROOT=gisp.gov.test
+
 - Выполнить ``chmod +x setting_vm.sh``
 
 - Для сервиса elasticsearch выполнить команду: ``./setting_vm.sh`` или `` bash setting_vm.sh``
 
 - Настроить файл hosts ``sudo nano /etc/hosts``
 
-- В файле hosts вставить строку ``127.0.1.1   gstd2.test`` или изменить на свое имя 
+- В файле hosts вставить строку ``127.0.1.1   например gstd2.test`` или изменить на свое имя 
 
 - Запустить сервисы: ``docker-compose up -d``
 
