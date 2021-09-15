@@ -60,6 +60,8 @@ services:
  proxy_server:
     image: nginx:1.19.8-alpine
     container_name: proxy_server
+    environment:
+       ROOT_DOMAIN: ${PATH_ROOT}
     restart: unless-stopped
     ports:
       - "80:80"
