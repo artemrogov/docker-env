@@ -92,9 +92,9 @@ services:
     container_name: master_db
     tty: true
     environment:
-      POSTGRES_DB: $DB_USERNAME
-      POSTGRES_USER: $DB_NAME
-      POSTGRES_PASSWORD: $DB_PASSWORD
+        POSTGRES_DB: $DB_USERNAME
+        POSTGRES_USER: $DB_NAME
+        POSTGRES_PASSWORD: $DB_PASSWORD
     ports:
       - 5432:5432
     volumes:
