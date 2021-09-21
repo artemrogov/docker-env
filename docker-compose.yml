@@ -2,41 +2,18 @@ version: "3.7"
 
 services:
 
- frontend_server:
-    image: nginx:1.19.8-alpine
-    container_name: frontend_server
-    restart: unless-stopped
-    ports:
-      - "8081:8081"
-    volumes:
-      - ./frontend_server/:/etc/nginx/conf.d/
-    networks:
-      - gstd2_network
 
- frontend_service:
-    image: node:12-alpine
-    command: sh -c "yarn install && yarn run dev"
-    ports:
-       - 3000:3000
-    container_name: frontend_service
-    restart: unless-stopped
-    working_dir: /app
-    tty: true
-    volumes:
-      - ./frontend:/app
-    networks:
-     - gstd2_network
-
- server_backend:
+ nginx:
     image: nginx:1.19.8-alpine
-    container_name: server_backend
+    container_name: nginx
     restart: unless-stopped
     links:
       - api_backend
     ports:
-      - "8000:8000"
+      - "80:80"
+      - "443:443"
     volumes:
-      - ./server_backend/:/etc/nginx/conf.d/
+      - ./nginx/:/etc/nginx/conf.d/
     networks:
       - gstd2_network
 
@@ -61,23 +38,6 @@ services:
      - gstd2_network
 
        
- proxy_server:
-    image: nginx:1.19.8-alpine
-    container_name: proxy_server
-    environment:
-       ROOT_DOMAIN: ${PATH_ROOT}
-    restart: unless-stopped
-    links:
-      - server_backend
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/:/etc/nginx/conf.d/
-    networks:
-      - gstd2_network
-
- 
  cache_service:
   image: redis:latest 
   container_name: cache_service
