@@ -37,7 +37,27 @@ services:
     networks:
      - gstd2_network
 
-       
+
+ auth_service:
+    build:
+      args:
+         user: ${USER}
+         uid: 1000
+      context: ./auth_service
+      dockerfile: Dockerfile
+    container_name: auth_service
+    links:
+       - test_db
+    ports:
+      - 9001:9001
+    restart: unless-stopped
+    working_dir: /var/www/html/
+    tty: true
+    volumes:
+      - ./auth_service/service:/var/www/html/service
+    networks:
+     - gstd2_network    
+     
  cache_service:
   image: redis:latest 
   container_name: cache_service
@@ -67,12 +87,66 @@ services:
      - master_data:/var/lib/postgresql/data/
     networks:
       - gstd2_network
+      
+ test_db:
+    image: postgres:12.5-alpine
+    restart: unless-stopped
+    container_name: test_db
+    tty: true
+    environment:
+        POSTGRES_DB: $DBTEST_USERNAME
+        POSTGRES_USER: $DBTEST_NAME
+        POSTGRES_PASSWORD: $DBTEST_PASSWORD
+    ports:
+      - 5433:5432
+    volumes:
+     - test_data:/var/lib/postgresql/data/
+    networks:
+      - gstd2_network
+
+
+ nq_db:
+    image: postgres:12.5-alpine
+    restart: unless-stopped
+    container_name: nq_db
+    tty: true
+    environment:
+        POSTGRES_DB: test2
+        POSTGRES_USER: test2
+        POSTGRES_PASSWORD: test123
+    ports:
+      - 5434:5432
+    volumes:
+     - nut_data:/var/lib/postgresql/data/
+    networks:
+      - gstd2_network
+  
+
+ rabbitmq:
+    image: docker.io/bitnami/rabbitmq:3.9
+    container_name: rabbitmq
+    ports:
+      - '4369:4369'
+      - '5551:5551'
+      - '5552:5552'
+      - '5672:5672'
+      - '25672:25672'
+      - '15672:15672'
+    environment:
+      - RABBITMQ_USERNAME=admin
+      - RABBITMQ_PASSWORD=test123456
+    volumes:
+      - 'rabbitmq_data:/bitnami/rabbitmq/mnesia'
+    networks:
+      - gstd2_network
+       
 
  service_search:
-      image: 'bitnami/elasticsearch:latest'
+      image: 'bitnami/elasticsearch:7.16.2'
       container_name: service_search
       volumes:
-        - elasticsearch:/usr/share/elasticsearch/data
+        - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,z
+        - elasticsearch:/usr/share/elasticsearch/data:z
       environment:
         - bootstrap.memory_lock=true
         - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
@@ -82,12 +156,26 @@ services:
       networks:
         - gstd2_network
 
+ kibana:
+    image: 'docker.elastic.co/kibana/kibana:7.16.2'
+    container_name: kibana
+    volumes:
+      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,z
+    ports:
+    - "5601:5601"
+    networks:
+    - gstd2_network
+
+ 
 networks:
   gstd2_network:
     driver: bridge
 
 volumes:
    master_data:
-   www-html: 
+   test_data:
+   nut_data: 
+   www-html:
    cache_redis_data:
    elasticsearch: 
+   rabbitmq_data:
